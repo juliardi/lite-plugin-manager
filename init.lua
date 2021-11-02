@@ -1,4 +1,4 @@
--- mod-version:1 -- lite-xl 1.16
+-- mod-version:2 -- lite-xl 2.00
 local core = require "core"
 local command = require "core.command"
 local common = require "core.common"
@@ -16,7 +16,7 @@ end
 local PLUGIN_PATH, PLUGIN_REPO
 if is_lite_xl() then
   PLUGIN_PATH = USERDIR .. "/plugins"
-  PLUGIN_REPO = "franko"
+  PLUGIN_REPO = "lite-xl"
 else
   PLUGIN_PATH = EXEDIR .. "/data/plugins"
   PLUGIN_REPO = "rxi"
@@ -553,18 +553,20 @@ local function get_remote_plugins(src_url)
   for t, match in md_parse(content) do
     if t == "row" then
       local name, url = md_url_parse(match[1])
-      url = url:match("^http") and url or base_url .. "/" .. url
-      name = name:match("`([^`]-)`")
-      local path = PLUGIN_PATH .. PATHSEP .. get_url_filename(url)
-      local description = md_sanitize(match[2])
-      local plugin_type = match[1]:find("%*%s-") and "dir" or "file"
-      res[name] = {
-        name = name,
-        url = url,
-        path = path,
-        description = description,
-        type = plugin_type
-      }
+      if url ~= nil then
+        url = url:match("^http") and url or base_url .. "/" .. url
+        name = name:match("`([^`]-)`")
+        local path = PLUGIN_PATH .. PATHSEP .. get_url_filename(url)
+        local description = md_sanitize(match[2])
+        local plugin_type = match[1]:find("%*%s-") and "dir" or "file"
+        res[name] = {
+          name = name,
+          url = url,
+          path = path,
+          description = description,
+          type = plugin_type
+        }
+      end
     end
   end
   return res
